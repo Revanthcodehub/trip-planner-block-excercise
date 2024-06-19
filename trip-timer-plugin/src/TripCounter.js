@@ -9,7 +9,6 @@ export default function TripCounter({ tripName, tripTime }) {
 	const [secondsLeft, setSecondsLeft] = useState(
 		calculateSecondsLeft(tripTime),
 	);
-	const encouragement = "Let's go!";
 
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -21,6 +20,16 @@ export default function TripCounter({ tripName, tripTime }) {
 		};
 	}, [tripTime]);
 
+	function encouragementText() {
+		let encouragement = "Let's go!";
+		if (secondsLeft < 300) {
+			encouragement = 'Time to go!'
+		}
+		if (secondsLeft >= 300 && secondsLeft <= 600) {
+			encouragement = 'Almost time to leave!'
+		}
+
+	}
 	function encouragementAreaClasses() {
 		const classes = ["encouragementArea"];
 		if (secondsLeft < 60) {
@@ -43,8 +52,8 @@ export default function TripCounter({ tripName, tripTime }) {
     }
 
     function addNewTask() {
-        setTasks([...tasks, {text: newTaskText, done: false}]);
-        setNewTaskText('');
+			setTasks([...tasks, {text: newTaskText, done: false}]);
+			setNewTaskText('');
     }
 
     function changeCheckbox(event) {
@@ -104,7 +113,7 @@ export default function TripCounter({ tripName, tripTime }) {
                     <button onClick={addNewTask}>+</button>
                 </div>
                 <div className={encouragementAreaClasses()}>
-                    {encouragement}
+                    {encouragementText()}
                 </div>
             </div>
         </div>
