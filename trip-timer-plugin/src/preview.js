@@ -19,7 +19,6 @@ export default function TripCounter({
 	const [secondsLeft, setSecondsLeft] = useState(
 		calculateSecondsLeft(tripTime),
 	);
-	const encouragement = "Let's go!";
 
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -46,6 +45,16 @@ export default function TripCounter({
 		return classes.join(" ");
 	}
 
+	function encouragementText() {
+		let encouragement = "Let's go!";
+		if (secondsLeft < 300) {
+			encouragement = 'Time to go!'
+		}
+		if (secondsLeft >= 300 && secondsLeft <= 600) {
+			encouragement = 'Almost time to leave!'
+		}
+		return encouragement;
+	}
 	return (
 		<div class="CountdownPage">
 			<RichText
@@ -80,7 +89,7 @@ export default function TripCounter({
 				</div>
 			</div>
 			<div class="otherStuff">
-				<div className={encouragementAreaClasses()}>{encouragement}</div>
+				<div className={encouragementAreaClasses()}>{ encouragementText()}</div>
 			</div>
 		</div>
 	);
@@ -127,26 +136,26 @@ function niceHumanTime(time) {
 function calculateTimeLeft(time) {
 	const now = new Date();
 	const then = new Date();
-
+	let secondsLeft = 0;
 	const [hours, minutes] = time.split(":");
 
-	now.setHours(hours);
-	now.setMinutes(minutes);
-	now.setSeconds(0);
+	then.setHours(hours);
+	then.setMinutes(minutes);
+	then.setSeconds(0);
 
-	let secondsLeft = (now - then) / 1000; // millis
+	if(then > now) {
+		secondsLeft = (then - now) / 1000; // millis
+		if (secondsLeft > 3600) {
+			let hours = Math.floor(secondsLeft / 3600);
+			let minutes = Math.floor((secondsLeft % 3600) / 60);
 
-	if (secondsLeft > 3600) {
-		let hours = Math.floor(secondsLeft / 3600);
-		let minutes = Math.floor((secondsLeft % 3600) / 60);
+			return `${hours} Hours and ${minutes} minutes`;
+		} else if (secondsLeft > 60) {
+			let minutes = Math.floor(secondsLeft / 60);
+			let seconds = Math.floor(secondsLeft % 60);
 
-		return `${hours} Hours and ${minutes} minutes`;
-	} else if (secondsLeft > 60) {
-		let minutes = Math.floor(secondsLeft / 60);
-		let seconds = Math.floor(secondsLeft % 60);
-
-		return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+			return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+		}
 	}
-
 	return `${secondsLeft} SECONDS`;
 }
